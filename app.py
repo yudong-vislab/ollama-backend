@@ -31,11 +31,15 @@ def chat():
             if message['role'] == 'user':
                 message['images'] = [image_base64]
     else:
-        # 确保无图像数据时，不添加或保留 `images` 字段
+        # 检查并移除不符合格式的图像数据
         for message in messages:
-            if 'images' in message and message['images'] is None:
-                del message['images']
-
+            if 'images' in message:
+                if isinstance(message['images'], list) and message['images']:
+                    # 格式化所有图像数据
+                    message['images'] = [correct_base64_padding(image) for image in message['images'] if image.startswith('data:image')]
+                else:
+                    # 如果没有图像或者图像字段为空，移除该字段
+                    del message['images']
     try:
         print("Messages sent to model:", messages)
         response = ollama.chat(model=model, messages=messages)
