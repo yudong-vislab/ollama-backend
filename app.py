@@ -19,29 +19,29 @@ def correct_base64_padding(base64_str):
 def save_base64_image(base64_str, output_path):
     try:
         # 打印 Base64 字符串的前 100 个字符以供调试
-        print(f"Base64 string (first 100 chars): {base64_str[:100]}")
+        # print(f"Base64 string (first 100 chars): {base64_str[:100]}")
         
         # 移除Base64字符串中的头部信息
         if base64_str.startswith('data:image'):
             base64_str = base64_str.split(',', 1)[1]
         
         # 打印移除头部信息后的 Base64 字符串的前 100 个字符以供调试
-        print(f"Base64 string without header (first 100 chars): {base64_str[:100]}")
+        # print(f"Base64 string without header (first 100 chars): {base64_str[:100]}")
         
         base64_str = correct_base64_padding(base64_str)
         
         # 打印添加填充后的 Base64 字符串的前 100 个字符以供调试
-        print(f"Base64 string with padding (first 100 chars): {base64_str[:100]}")
+        # print(f"Base64 string with padding (first 100 chars): {base64_str[:100]}")
         
         image_data = base64.b64decode(base64_str)
         
         # 打印解码后的图像数据的前 100 个字节以供调试
-        print(f"Image data (first 100 bytes): {image_data[:100]}")
+        # print(f"Image data (first 100 bytes): {image_data[:100]}")
         
         image = Image.open(BytesIO(image_data))
         
         # 打印图像信息以供调试
-        print(f"Image format: {image.format}, size: {image.size}, mode: {image.mode}")
+        # print(f"Image format: {image.format}, size: {image.size}, mode: {image.mode}")
         
         image.save(output_path)
         return output_path
@@ -64,10 +64,14 @@ def chat():
         image_path = os.path.join(current_dir, 'uploaded_image.png')
         image_path = save_base64_image(image_base64, image_path)
         if image_path:
-            # 查找包含图像的消息并添加图像路径和内容
+            # 读取图像内容为字节
+            with open(image_path, 'rb') as image_file:
+                image_bytes = image_file.read()
+            # 查找包含图像的消息并添加图像内容和拼接的文本
             for message in messages:
-                if 'image' in message:
-                    message['content'] = f"{image_path} {message['content']}"
+                if 'images' in message:
+                    message['content'] = message['content']
+                    message['images'] = image_path
 
     try:
         print("Messages sent to model:", messages)  # 打印传递给模型的消息
@@ -78,7 +82,7 @@ def chat():
         if image_path and os.path.exists(image_path):
             os.remove(image_path)
 
-        return jsonify({'message': {'content': message_content, 'image': image_base64}})
+        return jsonify({'message': {'content': message_content, 'images': image_base64}})
     except Exception as e:
         print(f"Error during chat model processing: {e}")
         return jsonify({'error': str(e)}), 500
