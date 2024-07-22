@@ -64,10 +64,10 @@ def chat():
         image_path = os.path.join(current_dir, 'uploaded_image.png')
         image_path = save_base64_image(image_base64, image_path)
         if image_path:
-            # 查找包含图像的消息并添加图像路径
+            # 查找包含图像的消息并添加图像路径和内容
             for message in messages:
                 if message.get('hasImage'):
-                    message['image'] = image_path
+                    message['content'] = f"{image_path} {message['content']}"
                     break
 
     try:
