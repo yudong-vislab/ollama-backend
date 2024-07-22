@@ -66,9 +66,8 @@ def chat():
         if image_path:
             # 查找包含图像的消息并添加图像路径和内容
             for message in messages:
-                if message.get('hasImage'):
+                if 'image' in message:
                     message['content'] = f"{image_path} {message['content']}"
-                    break
 
     try:
         print("Messages sent to model:", messages)  # 打印传递给模型的消息
