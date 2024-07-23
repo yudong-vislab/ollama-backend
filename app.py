@@ -25,7 +25,7 @@ def chat():
     
     # 对于传来的每条消息，如果是用户角色并且有图像数据，则添加图像
     if image_base64:
-        print("Received Base64 image data")
+        # print("Received Base64 image data")
         image_base64 = correct_base64_padding(image_base64)
         for message in messages:
             if message['role'] == 'user':
@@ -41,7 +41,7 @@ def chat():
                     # 如果没有图像或者图像字段为空，移除该字段
                     del message['images']
     try:
-        print("Messages sent to model:", messages)
+        # print("Messages sent to model:", messages)
         response = ollama.chat(model=model, messages=messages)
         message_content = response['message']['content']
 
