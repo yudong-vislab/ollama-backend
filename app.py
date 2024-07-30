@@ -16,20 +16,6 @@ def correct_base64_padding(base64_str):
         base64_str += '=' * (4 - missing_padding)
     return base64_str
 
-# @app.route('/api/generate',methods=['POST'])
-# def generate():
-#     data=request.json
-#     model=data.get('model')
-#     prompt=data.get('prompt')
-#     print(prompt)
-#     try:
-#         response = ollama.generate(model=model,prompt=prompt)
-#         message_content = response['response']
-#         print(message_content)
-#         return jsonify({'conclude':message_content})
-#     except Exception as e:
-#         print(f"Error during chat model processing: {e}")
-#         return jsonify({'error': str(e)}), 500    
 @app.route('/api/chat', methods=['POST'])
 def chat():
     concludeflag = 0
@@ -60,7 +46,7 @@ def chat():
         response = ollama.chat(model=model, messages=messages)
         message_content = response['message']['content']
         conclude = ''
-        prompt = "我将给你提供一段内容，这段内容是对一张图片的描述。请你用一两个词来总结这段文字，能够实现对这张未知图片的描述和标记。图片的文字描述如下："+message_content
+        prompt = "For the content:" + message_content + ", use three key words in English academic style to describe the main idea."
         resp = ollama.generate(model=model,prompt=prompt)
         print(resp)
         conclude = resp['response']
